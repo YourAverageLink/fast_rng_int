@@ -3,7 +3,7 @@ from random import getrandbits
 
 def rand_below(n: int):
     """
-    Returns a random positive integer less than n.
+    Returns a random nonnegative integer less than n.
 
     This algorithm generates 64 bits at a time,
     multiplies by the provided maximum to get
