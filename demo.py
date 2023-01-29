@@ -25,9 +25,9 @@ def rand_below(n: int):
     # This is because, even if an infinite stream of 1s were to follow, it would not
     # increment the integer portion of the number (m >> 64).
     # However, if it is possible, use recursion to determine if the number should increment.
-    if (-m & 0xFFFFFFFFFFFFFFFF) < n:
-        # (-m & (2**64 - 1)) is the 2's complement of the last 64 bits of m
-        # If this result is less than n, that means it is possible for the integer
+    if (~m & 0xFFFFFFFFFFFFFFFF) < (n - 1):
+        # (~m & (2**64 - 1)) is the 1's complement of the last 64 bits of m
+        # If this result is less than (n - 1), that means it is possible for the integer
         # portion of m to increment if we were to allow more bits to be supplied.
         # To ensure uniformity, more bits are needed.
         return (m + rand_below(n)) >> 64
