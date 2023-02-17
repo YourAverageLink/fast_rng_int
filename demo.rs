@@ -7,7 +7,7 @@ fn gen_mod_u64(n: u64) -> u64 {
         let mut lo = r.wrapping_mul(n);
         while lo > n.wrapping_neg() {
             r = gen_u64();
-            hi = r.mul_high_u64(r, n);
+            hi = mul_high_u64(r, n);
             if hi > !lo {
               return result + 1;
             }
