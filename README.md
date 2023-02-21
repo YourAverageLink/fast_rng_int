@@ -32,8 +32,7 @@ However, if the input upper bound is not a power of 2, there is a possibility th
 to a number on its right. This means that, if we were to request more bits to choose this point, there is a chance
 these new bits could push the point over to the right of the number, thus changing the output.
 
-The algorithm represents the "points" as `m = n * the 64 random bits`, so this case happens if the last 64 bits of m are
-very close to overflowing.
+The algorithm represents the "points" as `(lo, hi) = n * the 64 random bits`, so this case happens if the lo bits are close to overflowing.
 
 Consider an extreme example, with the same 0-6 number line, but suppose we only generated 3 bits.
 
@@ -45,9 +44,9 @@ The last bit therefore represents 1/8 * 6 = 0.75 of value
 
 010 -> 1.5
 
-011 -> 2.25, which cannot ever reach 3 even with infinite future 1s, done, result = 5
+011 -> 2.25, which cannot ever reach 3 even with infinite future 1s, done, result = 2
 
-100 -> 3, which cannot increase to 4 anymore (see later), done, result = 0
+100 -> 3, which cannot increase to 4 anymore (see later), done, result = 3
 
 101 -> 3.75
 
@@ -57,6 +56,17 @@ The last bit therefore represents 1/8 * 6 = 0.75 of value
 
 The 4 cases within less than 0.75 of incrementing I claim cannot yet terminate, while the other 4 I claim are done.
 
-Consider 101: `m = 101 * 110 (six) = 11110`
+Consider 101: `hi, lo = 101 * 110 (six) -> 11, 110`
 
-The last three bits of m are `110`. The algorithm checks the 1s complement of this number, `001` 
+The low bits are `110`. The algorithm checks this portion against the 2's complement of the upper bound, `010` 
+
+Suppose the low bits are less than or equal to the 2's complement of n. What does that mean?
+- If we were to get infinite 1s afterward, then multiply by n, this represents
+- .111111111111111... * n, which *approaches* n, and thus, if the low bits are less than
+- 2's complement of n, they will never overflow, and if they're equal, it will appraoch overflow
+- but never reach it. Therefore, we are done because we know the high bits can never increment.
+- Example: 111 * 110 -> 101 hi, 010 low, so low can only ever reach 111.111111111..., and high won't increment.
+
+
+Since 110 > 010, we can conclude that, if we were to supply more bits, it's possible for low to overflow,
+therefore incrementing the high bits. We need more bits to be sure!
