@@ -94,3 +94,11 @@ Suppose we have access to a generator for a uniform 64 bit unsigned integer.
 7. Continue the loop if necessary, and outside the loop, return the result.
 
 This algorithm intends to be a divisionless alternative to Lemire's algorithm. It is inspired by Canon's proposed Swift algorithm, but by using a loop, it can ensure uniformity and avoid consuming an extra random word if it's not needed.
+
+# Interesting Stuff
+
+In trying to do some math to evaluate stats for my algorithm, I've come up with the concept of a "binary borderline number."
+- These are the numbers I check for in my algorithm -- numbers that could "cross the number line" if we had more bits.
+- There are always at most (n - 1) binary borderline numbers for n -- this happens if n is odd.
+- For example, 6 has 4 binary borderline numbers, that is, suppose we generate 4 bits, 4/16 of the time we're uncertain
+- An interesting formula for counting how many binary borderline numbers there are is n & (n - 1), which I found thanks to putting a sequence of numbers (0, 0, 2, 0, 4, 4, 6, 0, 8) into the OEIS. Thanks OEIS!
