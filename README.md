@@ -78,3 +78,19 @@ Repeat the process. This time, though, we can take another early out.
 - hi < !lo implies hi + lo does not overflow (and never will). We can return result
 - hi == lo implies uncertainty, though. hi + lo then equals 111... -> if we're also on the "borderline" with our "new numberline", we're not done yet
 - - By this point, we can simply repeat the process, hence why the loop condition is lo > n.wrapping_neg()
+
+# The Algorithm
+
+Suppose we have access to a generator for a uniform 64 bit unsigned integer.
+
+1. Generate the number (remember we're imagining a radix point at the start so it's in the range [0, 1))
+2. Multiply and store into a variable for the lower 64 and higher 64 bits.
+3. Remember that if low <= the 2's complement of the upper bound, we're for sure done and we can return the original high bits
+- Thus, we will use a while loop with condition low > n.wrapping_neg(), and return outside the loop
+4. Inside the loop, we'll remember the original high bits (so we have a return value) and generate 64 new random bits
+5. Calculate the new high bits. From here, we can compare to the old low bits (which we will have not yet replaced with the new random number)
+- To avoid branching, I decide to add (hi > !lo) as a u64 to result (so we return result + 1 if necessary)
+6. Calculate the new low bits. (Again, to avoid branching, I multiply by (hi == lo), so it evaluates to 0 if we're certain our result is determined, so we exit the loop)
+7. Continue the loop if necessary, and outside the loop, return the result.
+
+This algorithm intends to be a divisionless alternative to Lemire's algorithm. It is inspired by Canon's proposed Swift algorithm, but by using a loop, it can ensure uniformity and avoid consuming an extra random word if it's not needed.
