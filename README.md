@@ -70,3 +70,11 @@ Suppose the low bits are less than or equal to the 2's complement of n. What doe
 
 Since 110 > 010, we can conclude that, if we were to supply more bits, it's possible for low to overflow,
 therefore incrementing the high bits. We need more bits to be sure!
+
+Repeat the process. This time, though, we can take another early out.
+- If our new set of high bits for sure increments or does not increment the old low bits, we know we're done
+- We check this with a comparison with !lo.
+- hi > !lo implies hi + lo overflows, therefore we can return result + 1
+- hi < !lo implies hi + lo does not overflow (and never will). We can return result
+- hi == lo implies uncertainty, though. hi + lo then equals 111... -> if we're also on the "borderline" with our "new numberline", we're not done yet
+- - By this point, we can simply repeat the process, hence why the loop condition is lo > n.wrapping_neg()
