@@ -90,7 +90,7 @@ Suppose we have access to a generator for a uniform 64 bit unsigned integer.
 4. Inside the loop, we'll remember the original high bits (so we have a return value) and generate 64 new random bits
 5. Calculate the new high bits. From here, we can compare to the old low bits (which we will have not yet replaced with the new random number)
 - To avoid branching, I decide to add (hi > !lo) as a u64 to result (so we return result + 1 if necessary)
-6. Calculate the new low bits. (Again, to avoid branching, I multiply by (hi == lo), so it evaluates to 0 if we're certain our result is determined, so we exit the loop)
+6. Calculate the new low bits. (Again, to avoid branching, I multiply by (hi == !lo), so it evaluates to 0 if we're certain our result is determined, so we exit the loop)
 7. Continue the loop if necessary, and outside the loop, return the result.
 
 This algorithm intends to be a divisionless alternative to Lemire's algorithm. It is inspired by Canon's proposed Swift algorithm, but by using a loop, it can ensure uniformity and avoid consuming an extra random word if it's not needed.
