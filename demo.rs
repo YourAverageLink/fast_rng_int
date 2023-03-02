@@ -10,7 +10,7 @@ fn gen_mod_u64(n: u64) -> u64 {
             r = gen_u64();
             hi = mul_high_u64(r, n);
             // hi > !lo implies the new bits *would* increment the original result, so add to the result
-            result += (hi > !lo);
+            result += (hi > !lo) as u64;
             // hi != lo implies the new bits definitely do (hi > !lo) or do not (hi < !lo) increment the result
             // set lo to 0 to exit the loop branchlessly if so.
             lo = r.wrapping_mul(n) * (hi == !lo) as u64;
@@ -30,7 +30,10 @@ fn alt_mod_u64(n: u64) -> u64 {
             r = gen_u64();
             hi = mul_high_u64(r, n);
             result += (hi > not_lo) as u64;
-            not_lo = !r.wrapping_mul(n) * (hi == not_lo) as u64;
+            if hi != not_lo {
+                return result;
+            }
+            not_lo = !r.wrapping_mul(n);
         }
         result
     }
